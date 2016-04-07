@@ -13,16 +13,21 @@ ruleset esproto_basic {
   global {
     temperatures = function() {
       ent:temperatures;
-    }
+    };
+
+    sensorData = function() {
+      event:attr("genericSensor")
+  	     .defaultsTo({})
+	     .klog("Sensor Data: ")
+	     
+    };
+
   }
 
   rule get_temperature {
     select when esproto new_temperature
     pre {
-      sensor_data = event:attr("genericSensor")
-		     .defaultsTo({})
-		     .klog("Sensor Data: ")
-		     ;
+      sensor_data = sensorData();
       sensor_specs = event:attr("specificSensor")
 		       .defaultsTo({}) 
 		       ;
