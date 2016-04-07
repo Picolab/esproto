@@ -20,15 +20,13 @@ ruleset esproto_basic {
     select when esproto new_temperature
     pre {
       sensor_data = event:attr("genericSensor")
-                     .decode()
 		     .defaultsTo({})
 		     .klog("Sensor Data: ")
 		     ;
       sensor_specs = event:attr("specificSensor")
-      		       .decode()
-		       .defaultsTo({})
+		       .defaultsTo({}) 
 		       ;
-      temperature = (sensor_data{["data","temperatureF"]}).klog("Temperature: ");
+      temperature = (sensor_data{-["data","temperatureF"]}).klog("Temperature: ");
       updated_temperature = ent:temperature.append(temperature);
     }
     always {
