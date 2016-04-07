@@ -11,7 +11,30 @@ ruleset esproto_basic {
   }
 
   global {
-    temperatures = function() {
+    temperatures = function(limit, offset) {
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      max_returned = 25;
+
+      hard_offset = offset.isnull() 
+                 || offset eq ""        => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull() 
+                || limit eq ""          => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit; 
+
+      global_opt = {
+        "index" : hard_offset,
+	"limit" : hard_limit
+      }; 
+
+      sorted_temperature = this2that:transform(ent:temperatures, sort_opt, global_opt) || [];
       ent:temperatures;
     };
 
