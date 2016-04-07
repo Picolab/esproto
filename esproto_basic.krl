@@ -34,8 +34,8 @@ ruleset esproto_basic {
 	"limit" : hard_limit
       }; 
 
-      sorted_temperature = this2that:transform(ent:temperatures, sort_opt, global_opt) || [];
-      ent:temperatures;
+      sorted_temperatures = this2that:transform(ent:temperatures, sort_opt, global_opt) || [];
+      sorted_temperatures
     };
 
     sensorData = function() {
