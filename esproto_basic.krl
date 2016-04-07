@@ -26,7 +26,7 @@ ruleset esproto_basic {
       sensor_specs = event:attr("specificSensor")
 		       .defaultsTo({}) 
 		       ;
-      temperature = (sensor_data{-["data","temperatureF"]}).klog("Temperature: ");
+      temperature = (sensor_data{["data","temperatureF"]}).klog("Temperature: ");
       updated_temperature = ent:temperature.append(temperature);
     }
     always {
