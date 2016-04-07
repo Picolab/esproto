@@ -27,12 +27,14 @@ ruleset esproto_basic {
 		       .defaultsTo({}) 
 		       ;
       temperature = (sensor_data{["data","temperatureF"]}).klog("Temperature: ");
-      updated_temperature = ent:temperature.defaultsTo([]).append(temperature);
+      temperature_rec = {"temperature": temperature,
+      		      	 "timestamp": time:now()
+		        };
+      updated_temperature = ent:temperatures.defaultsTo([]).append(temperature_rec);
     }
     always {
-      set ent:temperature updated_temperature
+      set ent:temperatures updated_temperature
     }
   }
-
 
 }
