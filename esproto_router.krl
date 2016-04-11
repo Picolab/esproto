@@ -25,9 +25,10 @@ ruleset esproto_router {
     
   }
 
-  rule receive_hertbeat {
+  rule receive_heartbeat {
     select when wovynEmitter thingHeartbeat
     pre {
+      foo = event:attrs().klog("Seeing attributes: ");
       sensor_data = sensorData();
       sensor_specs = event:attr("specificSensor")
 		       .defaultsTo({}) 
