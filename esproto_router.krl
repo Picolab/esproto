@@ -1,0 +1,41 @@
+ruleset esproto_router {
+  meta {
+    name "esproto_router"
+    author "PJW"
+    description "Event Router for ESProto system"
+    
+    logging on
+    
+    sharing on
+    provides last
+  }
+
+  global {
+
+    sensorData = function() {
+      event:attr("genericSensor")
+  	     .defaultsTo({})
+	     .klog("Sensor Data: ")
+	     
+    };
+
+    lastHeatbeat = function() {
+      ent:lastHeatbeat
+    }
+    
+  }
+
+  rule receive_hertbeat {
+    select when wovynEmitter thingHeartbeat
+    pre {
+      sensor_data = sensorData();
+      sensor_specs = event:attr("specificSensor")
+		       .defaultsTo({}) 
+		       ;
+    }
+    always {
+      set ent:lastHeartbeat sensor_data
+    }
+  }
+
+}
