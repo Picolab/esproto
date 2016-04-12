@@ -26,7 +26,7 @@ ruleset esproto_router {
     };
 
 
-    lastHeatbeat = function() {
+    lastHeartbeat = function() {
       ent:lastHeatbeat
     }
     
