@@ -13,7 +13,7 @@ ruleset esproto_router {
   global {
 
     sensorData = function() {
-      event:attr("genericSensor")
+      event:attr("genericThing")
   	     .defaultsTo({})
 	     .klog("Sensor Data: ")
 	     
@@ -40,7 +40,7 @@ ruleset esproto_router {
       sensor_specs = sensorSpecs();
     }
     always {
-      set ent:lastHeartbeat sensor_data
+      set ent:lastHeartbeat sensor_data	
     }
   }
 
