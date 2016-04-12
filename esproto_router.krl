@@ -27,7 +27,7 @@ ruleset esproto_router {
 
 
     lastHeartbeat = function() {
-      ent:lastHeartbeat
+      ent:lastHeartbeat.klog("Return value ")
     }
     
   }
