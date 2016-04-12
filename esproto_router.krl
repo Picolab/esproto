@@ -7,7 +7,7 @@ ruleset esproto_router {
     logging on
     
     sharing on
-    provides last
+    provides lastHeartbeat
   }
 
   global {
@@ -18,6 +18,13 @@ ruleset esproto_router {
 	     .klog("Sensor Data: ")
 	     
     };
+
+    sensorSpecs = function() {
+       event:attr("specificSensor")
+		       .defaultsTo({})
+		       .klog("Sensor specs: ")
+    };
+
 
     lastHeatbeat = function() {
       ent:lastHeatbeat
@@ -30,9 +37,7 @@ ruleset esproto_router {
     pre {
       foo = event:attrs().klog("Seeing attributes: ");
       sensor_data = sensorData();
-      sensor_specs = event:attr("specificSensor")
-		       .defaultsTo({}) 
-		       ;
+      sensor_specs = sensorSpecs();
     }
     always {
       set ent:lastHeartbeat sensor_data
