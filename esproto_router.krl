@@ -12,10 +12,11 @@ ruleset esproto_router {
 
   global {
 
-    sensorData = function() {
-      event:attr("genericThing")
+    sensorData = function(path) {
+     gtd =  event:attr("genericThing")
   	     .defaultsTo({})
-	     .klog("Sensor Data: ")
+	     .klog("Sensor Data: ");
+     path.isnull() => gtd | gtd{path}
 	     
     };
 
@@ -29,18 +30,35 @@ ruleset esproto_router {
     lastHeartbeat = function() {
       ent:lastHeartbeat.klog("Return value ")
     }
+
+    lastHumidity = function() {
+      ent:lastHumidity.klog("return value ")
+    }
     
   }
 
   rule receive_heartbeat {
     select when wovynEmitter thingHeartbeat
+    foreach sensorData(["data"]) setting (sensor_type, sensor_data)
+      pre {
+        sensor_data = sensorData();
+	      
+
+       }
+       always {
+       	 set ent:lastHeartbeat sensor_data;
+	 raise esproto event sensor_type
+	   with readings = sensor_data
+       }
+  }
+
+  rule catch_humidity {
+    select when esptroto humidity
     pre {
-      foo = event:attrs().klog("Seeing attributes: ");
-      sensor_data = sensorData();
-      sensor_specs = sensorSpecs();
+      humidityData = event:attr("readings");
     }
     always {
-      set ent:lastHeartbeat sensor_data	
+      set ent:lastHumidity humidityData;
     }
   }
 
