@@ -39,21 +39,21 @@ ruleset esproto_router {
 
   rule receive_heartbeat {
     select when wovynEmitter thingHeartbeat
-    foreach sensorData(["data"]) setting (sensor_type, sensor_data)
+    foreach sensorData(["data"]) setting (sensor_type, sensor_readings)
       pre {
         sensor_data = sensorData();
-	      
+	event_name = "new_" + sensor_type + "_reading".klog("Event ");
 
        }
        always {
        	 set ent:lastHeartbeat sensor_data;
-	 raise esproto event sensor_type
-	   with readings = sensor_data
+	 raise esproto event sensor_name
+	   with readings = sensor_readings
        }
   }
 
   rule catch_humidity {
-    select when esptroto humidity
+    select when esproto new_humidity_reading
     pre {
       humidityData = event:attr("readings");
     }
