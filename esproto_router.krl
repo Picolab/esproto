@@ -7,7 +7,7 @@ ruleset esproto_router {
     logging on
     
     sharing on
-    provides lastHeartbeat
+    provides lastHeartbeat, lastHumidity, lastTemperature, lastPressure
   }
 
   global {
@@ -32,12 +32,46 @@ ruleset esproto_router {
     }
 
     lastHumidity = function() {
-      ent:lastHumidity.klog("return value ")
+      ent:lastHumidity
+    }
+    
+    lastTemperature = function() {
+      ent:lastTemperature
+    }
+    
+    lastPressure = function() {
+      ent:lastPressure
     }
     
   }
 
   rule receive_heartbeat {
+    select when wovynEmitter thingHeartbeat
+    pre {
+      sensor_data = event:attrs();
+
+    }
+    always {
+      set ent:lastHeartbeat sensor_data
+    }
+  }
+
+  rule check_battery {
+    select when wovynEmitter thingHeartbeat 
+    pre {
+      sensor_data = sensorData();
+      sensor_id = event:attrs().klog("Data from sensor");
+    }
+    if (sensor_data{"healthPercent"}) < 20 then noop()
+    fired {
+      log "Battery is low";
+      raise esproto event "battery_level_low" with id = "hello";
+    } else {
+      log "Battery is fine";    
+    }
+  }
+
+  rule route_readings {
     select when wovynEmitter thingHeartbeat
     foreach sensorData(["data"]) setting (sensor_type, sensor_readings)
       pre {
@@ -46,7 +80,7 @@ ruleset esproto_router {
        }
        always {
 	 raise esproto event event_name
-	   with readings = sensor_readings
+	   with readings = sensor_readings;
        }
   }
 
@@ -57,6 +91,26 @@ ruleset esproto_router {
     }
     always {
       set ent:lastHumidity humidityData;
+    }
+  }
+
+  rule catch_temperature {
+    select when esproto new_temperature_reading
+    pre {
+      temperatureData = event:attr("readings");
+    }
+    always {
+      set ent:lastTemperature temperatureData;
+    }
+  }
+
+  rule catch_pressure {
+    select when esproto new_pressure_reading
+    pre {
+      pressureData = event:attr("readings");
+    }
+    always {
+      set ent:lastPressure pressureData;
     }
   }
 
