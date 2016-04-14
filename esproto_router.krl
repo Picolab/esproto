@@ -41,13 +41,11 @@ ruleset esproto_router {
     select when wovynEmitter thingHeartbeat
     foreach sensorData(["data"]) setting (sensor_type, sensor_readings)
       pre {
-        sensor_data = sensorData();
 	event_name = "new_" + sensor_type + "_reading".klog("Event ");
 
        }
        always {
-       	 set ent:lastHeartbeat sensor_data;
-	 raise esproto event sensor_name
+	 raise esproto event event_name
 	   with readings = sensor_readings
        }
   }
