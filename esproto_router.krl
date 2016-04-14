@@ -12,6 +12,10 @@ ruleset esproto_router {
 
   global {
 
+    // configuration
+    healthy_battery_level = 20;
+
+    // internal functions
     sensorData = function(path) {
      gtd =  event:attr("genericThing")
   	     .defaultsTo({})
@@ -27,6 +31,7 @@ ruleset esproto_router {
     };
 
 
+    // API functions
     lastHeartbeat = function() {
       ent:lastHeartbeat.klog("Return value ")
     }
@@ -45,6 +50,7 @@ ruleset esproto_router {
     
   }
 
+  // mostly for debugging; see all data from last heartbeat
   rule receive_heartbeat {
     select when wovynEmitter thingHeartbeat
     pre {
@@ -56,21 +62,26 @@ ruleset esproto_router {
     }
   }
 
+  // check battery level
   rule check_battery {
     select when wovynEmitter thingHeartbeat 
     pre {
       sensor_data = sensorData();
-      sensor_id = event:attrs().klog("Data from sensor");
+      sensor_id = event:attr("emitterGUID");
+      sensor_properties = event:attr("property");
     }
-    if (sensor_data{"healthPercent"}) < 20 then noop()
+    if (sensor_data{"healthPercent"}) < healthy_battery_level then noop()
     fired {
       log "Battery is low";
-      raise esproto event "battery_level_low" with id = "hello";
+      raise esproto event "battery_level_low"
+        with id = sensor_id
+	 and properties = sensor_properties;
     } else {
       log "Battery is fine";    
     }
   }
 
+  // route all readings from the sensor array
   rule route_readings {
     select when wovynEmitter thingHeartbeat
     foreach sensorData(["data"]) setting (sensor_type, sensor_readings)
@@ -84,6 +95,7 @@ ruleset esproto_router {
        }
   }
 
+  // catch and store humidity
   rule catch_humidity {
     select when esproto new_humidity_reading
     pre {
@@ -94,6 +106,7 @@ ruleset esproto_router {
     }
   }
 
+  // catch and store temperature
   rule catch_temperature {
     select when esproto new_temperature_reading
     pre {
@@ -104,6 +117,7 @@ ruleset esproto_router {
     }
   }
 
+  // catch and store pressure
   rule catch_pressure {
     select when esproto new_pressure_reading
     pre {
