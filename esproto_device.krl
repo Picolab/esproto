@@ -19,7 +19,7 @@ ruleset esproto_device {
 
   rule auto_approve_pending_subscriptions {
     select when wrangler inbound_pending_subscription_added 
-           namespace re/esproto-meta/gi
+           name_space re/esproto-meta/gi
     pre{
       attributes = event:attrs().klog("subcription attributes :");
       subscriptions = wrangler:subscriptions()
