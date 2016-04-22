@@ -75,7 +75,8 @@ ruleset esproto_router {
       log "Battery is low";
       raise esproto event "battery_level_low"
         with id = sensor_id
-	 and properties = sensor_properties;
+	 and properties = sensor_properties
+	 and timestamp = time:now();
     } else {
       log "Battery is fine";    
     }
@@ -91,7 +92,8 @@ ruleset esproto_router {
        }
        always {
 	 raise esproto event event_name
-	   with readings = sensor_readings;
+	   with readings = sensor_readings
+  	    and timestamp = time:now();
        }
   }
 
