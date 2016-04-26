@@ -56,27 +56,28 @@ ruleset esproto_device {
     select when esproto new_temperature_reading
              or esproto new_humidity_reading
              or esproto new_pressure_reading
-    pre {
-      threshold_type = event_map{event:type()};
-      thresholds = thresholds(threshold_type);
-      reading = event:attr("readings").klog("Reading from #{threshold_type}: ");
-      lower_threshold = thresholds{"lower"};
-      upper_threshold = thresholds{"upper"};
-      under = reading < lower_threshold;
-      over = upper_threshold < reading;
-      msg = under => "#{threshold_type} is under threshold of #{lower_threshold}"
-          | over  => "#{threshold_type} is over threshold of #{upper_threshold}"
-	  |          "";
-    }
-    if(  under || over ) then noop();
-    fired {
-      raise esproto event "threshold_violation" attributes
-        {"reading": reading,
-	 "threshold": under => lower_threshold | upper_threshold,
-	 "message": "threshold violation: #{msg}"
-	}
+    foreach event:attr("readings") setting (reading)
+      pre {
+	threshold_type = event_map{event:type()};
+	thresholds = thresholds(threshold_type);
+	reading = reading.klog("Reading from #{threshold_type}: ");
+	lower_threshold = thresholds{"lower"};
+	upper_threshold = thresholds{"upper"};
+	under = reading < lower_threshold;
+	over = upper_threshold < reading;
+	msg = under => "#{threshold_type} is under threshold of #{lower_threshold}"
+	    | over  => "#{threshold_type} is over threshold of #{upper_threshold}"
+	    |          "";
+      }
+      if(  under || over ) then noop();
+      fired {
+	raise esproto event "threshold_violation" attributes
+	  {"reading": reading,
+	   "threshold": under => lower_threshold | upper_threshold,
+	   "message": "threshold violation: #{msg}"
+	  }
 
-    }
+      }
   }
 
 
