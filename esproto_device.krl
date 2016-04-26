@@ -64,14 +64,18 @@ ruleset esproto_device {
              or esproto new_pressure_reading
     foreach event:attr("readings") setting (reading)
       pre {
-	threshold_type = event_map{event:type()};
+        // thresholds
+	threshold_type = event_map{event:type()}; 
 	thresholds = thresholds(threshold_type);
+	lower_threshold = thresholds{"lower"};
+	upper_threshold = thresholds{"upper"};
+
+        // sensor readings
 	data = reading.klog("Reading from #{threshold_type}: ");
 	reading_value = data{reading_map{threshold_type}};
 	sensor_name = data{"name"};
-	
-	lower_threshold = thresholds{"lower"};
-	upper_threshold = thresholds{"upper"};
+
+        // decide
 	under = reading_value < lower_threshold;
 	over = upper_threshold < reading_value;
 	msg = under => "#{threshold_type} is under threshold of #{lower_threshold}"
@@ -96,7 +100,7 @@ ruleset esproto_device {
              or esproto battery_level_low
     foreach collectionSubscriptions() setting (subs)
       pre {
-	eci = subs{"event_channel"};
+	eci = subs{"event_eci"};
       }
       {
 	send_directive("Routing to collection")
