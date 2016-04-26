@@ -59,7 +59,7 @@ ruleset esproto_device {
     pre {
       threshold_type = event_map{event:type()};
       thresholds = thresholds(threshold_type);
-      reading = event:attr("readings");
+      reading = event:attr("readings").klog("Reading from #{threshold_type}: ");
       lower_threshold = thresholds{"lower"};
       upper_threshold = thresholds{"upper"};
       under = reading < lower_threshold;
