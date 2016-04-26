@@ -28,9 +28,15 @@ ruleset esproto_device {
       "new_pressure_reading" : "pressure"
     };
 
+    reading_map = {
+      "temperature": "temperatureF",
+      "humidity": "humidity",
+      "pressure": "pressure"
+    };
+
     collectionSubscriptions = function () {
-        raw_subs = wrangler:subscriptions().pick("$..subscribed[0][0]", true).klog(">>> All Channels >>> "); 
-	subs = raw_subs.filter(function(k,v){v{"namespace"} eq "esproto-meta" && v{"relationship"} eq "Device"});
+        raw_subs = wrangler:subscriptions().pick("$..subscribed[0]", true).klog(">>> All Channels >>> "); 
+	subs = raw_subs[0].filter(function(k,v){v{"namespace"} eq "esproto-meta" && v{"relationship"} eq "Device"});
 	subs
       };
   }
@@ -60,11 +66,14 @@ ruleset esproto_device {
       pre {
 	threshold_type = event_map{event:type()};
 	thresholds = thresholds(threshold_type);
-	reading = reading.klog("Reading from #{threshold_type}: ");
+	data = reading.klog("Reading from #{threshold_type}: ");
+	reading_value = data{reading_map{threshold_type}};
+	sensor_name = data{"name"};
+	
 	lower_threshold = thresholds{"lower"};
 	upper_threshold = thresholds{"upper"};
-	under = reading < lower_threshold;
-	over = upper_threshold < reading;
+	under = reading_value < lower_threshold;
+	over = upper_threshold < reading_value;
 	msg = under => "#{threshold_type} is under threshold of #{lower_threshold}"
 	    | over  => "#{threshold_type} is over threshold of #{upper_threshold}"
 	    |          "";
@@ -74,7 +83,7 @@ ruleset esproto_device {
 	raise esproto event "threshold_violation" attributes
 	  {"reading": reading,
 	   "threshold": under => lower_threshold | upper_threshold,
-	   "message": "threshold violation: #{msg}"
+	   "message": "threshold violation: #{msg} for #{sensor_name}"
 	  }
 
       }
