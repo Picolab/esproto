@@ -32,7 +32,7 @@ ruleset esproto_collection {
   rule clear_violation_log {
     select when esproto reset_collection_logs
     always {
-      set ent:violation_log {};
+      set ent:violation_log {"log_start": 1};
     }
   }
 
@@ -47,7 +47,7 @@ ruleset esproto_collection {
       	             .klog("New log ");
     }
     always {
-      set ent:violation_log new_log.defaultsTo({});
+      set ent:violation_log new_log
     }
   }
 
