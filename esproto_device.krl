@@ -65,7 +65,7 @@ ruleset esproto_device {
     foreach event:attr("readings") setting (reading)
       pre {
         // thresholds
-	threshold_type = event_map{event:type()}; 
+	threshold_type = event_map{event:type().klog("Event type: ")}; 
 	thresholds = thresholds(threshold_type);
 	lower_threshold = thresholds{"lower"};
 	upper_threshold = thresholds{"upper"};
