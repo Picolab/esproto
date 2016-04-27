@@ -24,7 +24,7 @@ ruleset esproto_collection {
 
   global {
     violations = function() {
-      ent:violation_logs
+      ent:violation_log
     }
    
   }
