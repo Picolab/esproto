@@ -35,7 +35,8 @@ ruleset esproto_collection {
     pre {
       readings = event:attr("readings");
       timestamp = readings{"timestamp"};
-      new_log = ent:violation_log.put([timestamp], readings)
+      log_a =  ent:violation_log || {};
+      new_log = log_a.put([timestamp], readings)
       	             .klog("New log ");
     }
     always {
