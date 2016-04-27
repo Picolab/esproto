@@ -72,8 +72,8 @@ ruleset esproto_device {
 
         // sensor readings
 	data = reading.klog("Reading from #{threshold_type}: ");
-	reading_value = data{reading_map{threshold_type}};
-	sensor_name = data{"name"};
+	reading_value = data{reading_map{threshold_type}}.klog("Reading value for #{threshold_type}: ");
+	sensor_name = data{"name"}.klog("Name of sensor: ");
 
         // decide
 	under = reading_value < lower_threshold;
