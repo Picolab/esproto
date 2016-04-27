@@ -101,7 +101,7 @@ ruleset esproto_device {
   rule route_to_owner {
     select when esproto threshold_violation
              or esproto battery_level_low
-    foreach collectionSubscriptions() setting (sub_name, sub_values)
+    foreach collectionSubscriptions() setting (sub_name, sub_value)
       pre {
 	eci = sub_value{"event_eci"};
       }
