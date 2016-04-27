@@ -18,7 +18,7 @@ ruleset esproto_collection {
     logging on
     
     sharing on
-    // provides
+    provides violations
     
   }
 
