@@ -41,9 +41,10 @@ ruleset esproto_collection {
     select when esproto threshold_violation
     pre {
       readings = event:attr("reading").decode();
-      timestamp = readings{"timestamp"};
+      timestamp = time:now(); // should come from device
       new_log = ent:violation_log
-      	             .put([timestamp], readings)
+      	             .put([timestamp], {"reading": readings,
+		                        "message": event:attr("message")})
       	             .klog("New log ");
     }
     always {
