@@ -37,7 +37,7 @@ ruleset esproto_device {
     collectionSubscriptions = function () {
         raw_subs = wrangler:subscriptions().pick("$..subscribed[0]", true).klog(">>> All Channels >>> "); 
 	subs = raw_subs[0].filter(function(k,v){v{"name_space"} eq "esproto-meta" && v{"relationship"} eq "Device"});
-	subs
+	subs.klog("Subscriptions: ").defaultsTo({})
       };
   }
 
