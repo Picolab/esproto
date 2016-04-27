@@ -33,7 +33,7 @@ ruleset esproto_collection {
   rule log_violation {
     select when esproto threshold_violation
     pre {
-      readings = event:attr("readings").decode();
+      readings = event:attr("reading").decode();
       timestamp = readings{"timestamp"};
       log_a =  ent:violation_log || {};
       new_log = log_a.put([timestamp], readings)
