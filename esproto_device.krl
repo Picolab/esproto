@@ -64,8 +64,10 @@ ruleset esproto_device {
              or esproto new_pressure_reading
     foreach event:attr("readings") setting (reading)
       pre {
+        event_type = event:type().klog("Event type: ");
+
         // thresholds
-	threshold_type = event_map{event:type().klog("Event type: ")}; 
+	threshold_type = event_map{event_type}; 
 	threshold_map = thresholds(threshold_type);
 	lower_threshold = threshold_map{"lower"};
 	upper_threshold = threshold_map{"upper"};
