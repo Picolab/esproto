@@ -23,10 +23,25 @@ ruleset esproto_collection {
   }
 
   global {
-
-
+    violations = function() {
+      ent:violation_logs
+    }
+   
   }
 
+
+  rule log_violation {
+    select when esproto threshold_violation
+    pre {
+      readings = event:attr("readings");
+      timestamp = readings{"timestamp"};
+      new_log = ent:violation_log.put([timestamp], readings)
+      	             .klog("New log ");
+    }
+    always {
+      set ent:violation_log new_log
+    }
+  }
 
 
   rule send_email_to_owner {

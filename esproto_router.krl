@@ -74,7 +74,7 @@ ruleset esproto_router {
     fired {
       log "Battery is low";
       raise esproto event "battery_level_low"
-        with snesor_id = sensor_id
+        with sensor_id = sensor_id
 	 and properties = sensor_properties
 	 and health_percent = sensor_data{"healthPercent"}
 	 and timestamp = time:now();
