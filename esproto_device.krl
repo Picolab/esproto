@@ -66,9 +66,9 @@ ruleset esproto_device {
       pre {
         // thresholds
 	threshold_type = event_map{event:type().klog("Event type: ")}; 
-	thresholds = thresholds(threshold_type);
-	lower_threshold = thresholds{"lower"};
-	upper_threshold = thresholds{"upper"};
+	threshold_map = thresholds(threshold_type);
+	lower_threshold = thresholds_map{"lower"};
+	upper_threshold = thresholds_map{"upper"};
 
         // sensor readings
 	data = reading.klog("Reading from #{threshold_type}: ");
