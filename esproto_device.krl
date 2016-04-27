@@ -90,13 +90,14 @@ ruleset esproto_device {
 	  {"reading": reading,
 	   "threshold": under => lower_threshold | upper_threshold,
 	   "message": "threshold violation: #{msg} for #{sensor_name}"
-	  }
+	  }	      
 
       }
   }
 
 
-  // meant to generally route events to owner. Extend eventex to choose what gets routed
+  // route events to all collections I'm a member of
+  // change eventex to expand routed events.
   rule route_to_owner {
     select when esproto threshold_violation
              or esproto battery_level_low
@@ -106,7 +107,7 @@ ruleset esproto_device {
       }
       {
 	send_directive("Routing to collection")
-	  with subscription = subs{"subscription_name"} 
+	  with subscription = sub_value{"subscription_name"} 
 	   and attrs = event:attrs();
 	event:send({"cid": eci}, "esproto", event:type())
 	  with attrs = event:attrs();
