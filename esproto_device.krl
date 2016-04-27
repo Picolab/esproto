@@ -87,7 +87,7 @@ ruleset esproto_device {
       if(  under || over ) then noop();
       fired {
 	raise esproto event "threshold_violation" attributes
-	  {"reading": reading,
+	  {"reading": reading.encode(),
 	   "threshold": under => lower_threshold | upper_threshold,
 	   "message": "threshold violation: #{msg} for #{sensor_name}"
 	  }	      
