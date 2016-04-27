@@ -29,6 +29,13 @@ ruleset esproto_collection {
    
   }
 
+  rule clear_violation_log {
+    select when esproto reset_collection_logs
+    always {
+      set ent:violation_log {};
+    }
+  }
+
 
   rule log_violation {
     select when esproto threshold_violation
