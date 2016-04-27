@@ -40,7 +40,7 @@ ruleset esproto_collection {
       	             .klog("New log ");
     }
     always {
-      set ent:violation_log new_log
+      set ent:violation_log new_log.defaultsTo({});
     }
   }
 
