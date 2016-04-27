@@ -78,8 +78,8 @@ ruleset esproto_device {
 	sensor_name = data{"name"}.klog("Name of sensor: ");
 
         // decide
-	under = reading_value < lower_threshold;
-	over = upper_threshold < reading_value;
+	under = reading_value < lower_threshold.klog("Under: ");
+	over = upper_threshold < reading_value.klog("Over: ");
 	msg = under => "#{threshold_type} is under threshold of #{lower_threshold}"
 	    | over  => "#{threshold_type} is over threshold of #{upper_threshold}"
 	    |          "";
