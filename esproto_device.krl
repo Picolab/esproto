@@ -105,13 +105,8 @@ ruleset esproto_device {
       pre {
 	eci = sub_value{"event_eci"};
       }
-      {
-	send_directive("Routing to collection")
-	  with subscription = sub_value{"subscription_name"} 
-	   and attrs = event:attrs();
-	event:send({"cid": eci}, "esproto", event:type())
-	  with attrs = event:attrs();
-      }
+      event:send({"cid": eci}, "esproto", event:type())
+        with attrs = event:attrs();
   }
 
 
