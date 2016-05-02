@@ -98,7 +98,7 @@ ruleset esproto_device {
 
   // route events to all collections I'm a member of
   // change eventex to expand routed events.
-  rule route_to_owner {
+  rule route_to_collections {
     select when esproto threshold_violation
              or esproto battery_level_low
     foreach collectionSubscriptions() setting (sub_name, sub_value)
