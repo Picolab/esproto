@@ -26,8 +26,48 @@ ruleset esproto_collection {
     violations = function() {
       ent:violation_log
     }
+
+
+    violations = function(limit, offset) {
+      // x_id = id.isnull().klog(">>>> id >>>>>");
+      // x_limit = limit.klog(">>>> limit >>>>>");
+      // x_offset = offset.klog(">>>> offset >>>>>"); 
+
+      // no meaningful ID right now
+      allViolations(limit, offset)
+    };
+
+    allViolations = function(limit, offset) {
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      max_returned = 25;
+
+      hard_offset = offset.isnull() 
+                 || offset eq ""        => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull() 
+                || limit eq ""          => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit; 
+
+      global_opt = {
+        "index" : hard_offset,
+	"limit" : hard_limit
+      }; 
+
+      sorted_keys = this2that:transform(ent:violation_log, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
+      sorted_keys.map(function(id){ ent:violation_log{id} })
+    };
+
    
   }
+
+
 
   rule clear_violation_log {
     select when esproto reset_collection_logs
@@ -44,6 +84,7 @@ ruleset esproto_collection {
       timestamp = time:now(); // should come from device
       new_log = ent:violation_log
       	             .put([timestamp], {"reading": readings,
+		                        "timestamp": timestamp,
 		                        "message": event:attr("message")})
       	             //.klog("New log ")
 		     ;
