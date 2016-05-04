@@ -71,8 +71,14 @@ ruleset esproto_collection {
 
   rule clear_violation_log {
     select when esproto reset_collection_logs
+    pre {
+      timestamp = time:now();
+    }
     always {
-      set ent:violation_log {"log_start": 1};
+      set ent:violation_log {timestamp: {"reading": {},
+		                         "timestamp": timestamp,
+		                         "message": "log cleared"}
+      	  		    };
     }
   }
 
