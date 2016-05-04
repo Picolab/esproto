@@ -25,7 +25,7 @@ ruleset esproto_router {
     };
 
     sensorSpecs = function() {
-       event:attr("specificSensor")
+       event:attr("specificThing")
 		       .defaultsTo({})
 		       .klog("Sensor specs: ")
     };
