@@ -1,6 +1,6 @@
 ruleset wrangler_pds {
   meta {
-    name "PDS"
+    name "Develop PDS"
     description <<
       Pico Data Services
     >>
