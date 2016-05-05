@@ -23,57 +23,8 @@ ruleset esproto_collection {
   }
 
   global {
-    violations = function() {
-      ent:violation_log
-    }
 
-
-    accessor_factory = function(entvar, options) {
-
-      opts = options.defaultsTo({});
-
-      path = opts{"path"}.defaultsTo(["timestamp"]).klog("Path: ");
-      reverse = opts{"reverse"}.defaultsTo(true);
-      compare = opts{"compare"}.defaultsTo("datetime");
-      limit = opts{"limit"}.defaultsTo(10);
-
-    
-      function(id,limit, offset) {
-
-	all_values = function(limit, offset) {
-	  sort_opt = {
-	    "path" : path,
-	    "reverse": true,
-	    "compare" : compare
-	  };
-
-	  max_returned = 25;
-
-	  hard_offset = offset.isnull() 
-		     || offset eq ""        => 0               // default
-		      |                        offset;
-
-	  hard_limit = limit.isnull() 
-		    || limit eq ""          => limit           // default
-		     | limit > max_returned => max_returned
-		     |                         limit; 
-
-	  global_opt = {
-	    "index" : hard_offset,
-	    "limit" : hard_limit
-	  }; 
-
-	  sorted_keys = this2that:transform(entvar, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
-	  sorted_keys.map(function(id){ entvar{id} })
-	};
-
-
-	id.isnull() || id eq "" => all_values(limit, offset)
-				 | entvar{id}
-      }
-    };
-
-    violations = accessor_factory(ent:violation_log)
+violations = pds:accessor_factory(ent:violation_log)
 
     old_violations = function(id,limit, offset) {
       id.isnull() || id eq "" => allViolations(limit, offset)
