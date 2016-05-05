@@ -121,43 +121,6 @@ ruleset wrangler_pds {
     };
 
 
-    /*-------------------------------------------
-   trips = function(id, limit, offset) {
-       // x_id = id.isnull().klog(">>>> id >>>>>");
-       // x_limit = limit.klog(">>>> limit >>>>>");
-       // x_offset = offset.klog(">>>> offset >>>>>"); 
-
-      id.isnull() || id eq "" => allTrips(limit, offset)
-                               | ent:trips_by_id{mkTid(id)};
-    };
-
-    allTrips = function(limit, offset) {
-      sort_opt = {
-        "path" : ["endTime"],
-  "reverse": true,
-  "compare" : "datetime"
-      };
-
-      max_returned = 25;
-
-      hard_offset = offset.isnull() 
-                 || offset eq ""        => 0               // default
-                  |                        offset;
-
-      hard_limit = limit.isnull() 
-                || limit eq ""          => 10              // default
-                 | limit > max_returned => max_returned
-     |                         limit; 
-
-      global_opt = {
-        "index" : hard_offset,
-  "limit" : hard_limit
-      }; 
-
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
-      sorted_keys.map(function(id){ ent:trip_summaries{id} })
-    };
-    --------------------------------------------*/
 
     profile = function(key){
         get_profile = function(k) {
@@ -203,7 +166,8 @@ ruleset wrangler_pds {
       };
       return = (Key.isnull()) => (get_setting(Rid) ) | (
                               Rid.isnull() => "error" | 
-                              ( (key eq "Data") => get_setting_value_default(Rid,Key,detail) | get_setting_value(Rid,Key)));
+                              ( (key eq "Data") => get_setting_value_default(Rid,Key,detail)
+			                         | get_setting_value(Rid,Key)));
       {
        'status'   : "success",// update   
         'settings' : return
@@ -321,21 +285,8 @@ ruleset wrangler_pds {
            mapvalues = mapvalues;
     }
   }
-// should not be here !!!!!!!
-  rule add_spime_item { // uses different hash_path to add a varible
-    select when pds new_data2_available
-    pre {
-      namespace = event:attr("namespace").defaultsTo("", "no namespace");
-      spime = event:attr("spime").defaultsTo("", "no spime");
-      keyvalue = event:attr("keyvalue").defaultsTo("", "no keyvalue");
-      hash_path = [namespace, spime, keyvalue];
-      value =  event:attr("value").defaultsTo("", "no value");
-    }
-    always {
-      set ent:general{hash_path} value;
-    }
-  }
-  // I dont think we need myCloud any more.
+
+// I dont think we need myCloud any more.
   /*
   rule SDS_init_mycloud {
     select when web sessionReady
@@ -484,31 +435,33 @@ ruleset wrangler_pds {
     }
   }
   */
-//----------------------------settings
+
+    //----------------------------settings
     // ent:settings 
     //     "a169x222" : {
-    //       "Name"   : "",
+    //       "name"   : "",
     //       "RID"    : "a169x222",
-    //       "Data"   : {},
-    //       "Schema" : []
+    //       "data"   : {},
+    //       "schema" : []
     //     }
   rule settings_added{ // will this fire with out kre stopping the failed passed varibles
-    select when pds add_settings
+    select when pdsdev new_settings
     pre {
-      setName   = event:attr("Name").defaultsTo(0,"no Name");
-      setRID    = event:attr("RID").defaultsTo(0,"no RID");
-      setSchema = event:attr("Schema").defaultsTo(0,"no Schema");
-      setData   = event:attr("Data").defaultsTo(0,"no Data");
-      setAttr   = event:attr("setAttr").defaultsTo(0,"no setAttr");
-      setValue  = event:attr("Value").defaultsTo(0,"no Value");
+      setName   = event:attr("name").defaultsTo(false,"no Name");
+      setRID    = event:attr("RID").defaultsTo(false,"no RID");
+      setSchema = event:attr("schema").defaultsTo(false,"no Schema");
+      setData   = event:attr("data").defaultsTo(false,"no Data");  
+      setAttr   = event:attr("setAttr").defaultsTo(false,"no setAttr");
+      setValue  = event:attr("value").defaultsTo(false,"no Value");
 
     }
     always {
       set ent:settings{[setRID, "Name"]}   setName if not setName;
       set ent:settings{[setRID, "RID"]}    setRID if not setRID;
-      set ent:settings{[setRID, "Schema"]} setSchema if not setSchema;
-      //set ent:settings{[setRID, "Data"]}   setData if not setData;
-      set ent:settings{[setRID, "Data", setAttr]} setValue if not setAttr;
+      set ent:settings{[setRID, "schema"]} setSchema if not setSchema;
+      set ent:settings{[setRID, "data"]}   setData if not setData;
+      set ent:settings{[setRID, "setValue", "setAttr"]} setAttr if not setAttr;
+      set ent:settings{[setRID, "value", "setValue"]} setValue if not setValue;
     }
   }
   /*
