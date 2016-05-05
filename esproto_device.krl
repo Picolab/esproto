@@ -17,9 +17,8 @@ ruleset esproto_device {
 
     // public
     thresholds = function(threshold_type) {
-      th = ent:thesholds.defaultsTo({}).klog("Thresholds: ");
-      threshold_type.isnull() => th
-                               | th{threshold_type}
+      threshold_type.isnull() => ent:thresholds
+                               | ent:thresholds{threshold_type}
     }
 
     //private
