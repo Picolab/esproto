@@ -34,7 +34,7 @@ ruleset esproto_collection {
 
       path = opts{"path"}.defaultsTo(["timestamp"]).klog("Path: ");
       reverse = opts{"reverse"}.defaultsTo(true);
-      compare = opts{"compare"}.defaultsTo("dateTime");
+      compare = opts{"compare"}.defaultsTo("datetime");
       limit = opts{"limit"}.defaultsTo(10);
 
     
