@@ -38,7 +38,7 @@ ruleset esproto_collection {
     
       function(id,limit, offset) {
 
-	all_valuess = function(limit, offset) {
+	all_values = function(limit, offset) {
 	  sort_opt = {
 	    "path" : path,
 	    "reverse": true,
