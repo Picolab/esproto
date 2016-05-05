@@ -30,10 +30,12 @@ ruleset esproto_collection {
 
     accessor_factory = function(entvar, options) {
 
-      path = options.defaultsTo({}).pick("$.path").defaultsTo("[timestamp]").klog("Path: ");
-      reverse = options.defaultsTo({}).pick("$.reverse").defaultsTo(true);
-      compare = options.defaultsTo({}).pick("$.compare").defaultsTo("dateTime");
-      limit = options.defaultsTo({}).pick("$.limit").defaultsTo(10);
+      opts = options.defaultsTo({});
+
+      path = opts{"path"}.defaultsTo("[timestamp]").klog("Path: ");
+      reverse = opts{"reverse"}.defaultsTo(true);
+      compare = ops{"compare"}.defaultsTo("dateTime");
+      limit = opts{"limit"}.defaultsTo(10);
 
     
       function(id,limit, offset) {
