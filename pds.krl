@@ -2,7 +2,7 @@ ruleset wrangler_pds {
   meta {
     name "Develop PDS"
     description <<
-      Pico Data Services
+      Development version of Pico Data Services
     >>
     author "Phil Windley & Ed Orcutt & PICOLABS"
 
