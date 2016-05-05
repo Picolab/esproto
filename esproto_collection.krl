@@ -14,7 +14,7 @@ ruleset esproto_collection {
             from = "esproto-notifications@joinfuse.com" and
 	    fromname = "Fuse-NoReply"
 
-    use module b16x40 alias pds
+    use module b16x40 alias pdsdev
     
     logging on
     
@@ -25,7 +25,7 @@ ruleset esproto_collection {
 
   global {
 
-    violations = pds:accessor_factory(ent:violation_log)
+    violations = pdsdev:accessor_factory(ent:violation_log)
    
   }
 
