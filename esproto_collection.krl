@@ -28,13 +28,54 @@ ruleset esproto_collection {
     }
 
 
-    violations = function(limit, offset) {
-      // x_id = id.isnull().klog(">>>> id >>>>>");
-      // x_limit = limit.klog(">>>> limit >>>>>");
-      // x_offset = offset.klog(">>>> offset >>>>>"); 
+    accessor_factory = function(entvar, options) {
 
-      // no meaningful ID right now
-      allViolations(limit, offset)
+      path = options.defaultsTo({}).pick("$.path").defaultsTo("[timestamp]");
+      reverse = options.defaultsTo({}).pick("$.reverse").defaultsTo(true);
+      compare = options.defaultsTo({}).pick("$.compare").defaultsTo("dateTime");
+      limit = options.defaultsTo({}).pick("$.limit").defaultsTo(10);
+
+    
+      function(id,limit, offset) {
+
+	all_valuess = function(limit, offset) {
+	  sort_opt = {
+	    "path" : path,
+	    "reverse": true,
+	    "compare" : compare
+	  };
+
+	  max_returned = 25;
+
+	  hard_offset = offset.isnull() 
+		     || offset eq ""        => 0               // default
+		      |                        offset;
+
+	  hard_limit = limit.isnull() 
+		    || limit eq ""          => limit           // default
+		     | limit > max_returned => max_returned
+		     |                         limit; 
+
+	  global_opt = {
+	    "index" : hard_offset,
+	    "limit" : hard_limit
+	  }; 
+
+	  sorted_keys = this2that:transform(entvar, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
+	  sorted_keys.map(function(id){ entvar{id} })
+	};
+
+
+	id.isnull() || id eq "" => all_values(limit, offset)
+				 | entvar{id}
+      }
+    };
+
+    violations = accessor_factory(ent:violation_log)
+
+    old_violations = function(id,limit, offset) {
+      id.isnull() || id eq "" => allViolations(limit, offset)
+                               | ent:violation_log{id}
     };
 
     allViolations = function(limit, offset) {
