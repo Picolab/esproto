@@ -14,6 +14,7 @@ ruleset esproto_collection {
             from = "esproto-notifications@joinfuse.com" and
 	    fromname = "Fuse-NoReply"
 
+    use module b16x40 alias pds
     
     logging on
     
@@ -24,40 +25,7 @@ ruleset esproto_collection {
 
   global {
 
-violations = pds:accessor_factory(ent:violation_log)
-
-    old_violations = function(id,limit, offset) {
-      id.isnull() || id eq "" => allViolations(limit, offset)
-                               | ent:violation_log{id}
-    };
-
-    allViolations = function(limit, offset) {
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
-
-      max_returned = 25;
-
-      hard_offset = offset.isnull() 
-                 || offset eq ""        => 0               // default
-                  |                        offset;
-
-      hard_limit = limit.isnull() 
-                || limit eq ""          => 10              // default
-                 | limit > max_returned => max_returned
-		 |                         limit; 
-
-      global_opt = {
-        "index" : hard_offset,
-	"limit" : hard_limit
-      }; 
-
-      sorted_keys = this2that:transform(ent:violation_log, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
-      sorted_keys.map(function(id){ ent:violation_log{id} })
-    };
-
+    violations = pds:accessor_factory(ent:violation_log)
    
   }
 
