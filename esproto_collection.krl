@@ -32,7 +32,7 @@ ruleset esproto_collection {
 
       opts = options.defaultsTo({});
 
-      path = opts{"path"}.defaultsTo("[timestamp]").klog("Path: ");
+      path = opts{"path"}.defaultsTo(["timestamp"]).klog("Path: ");
       reverse = opts{"reverse"}.defaultsTo(true);
       compare = ops{"compare"}.defaultsTo("dateTime");
       limit = opts{"limit"}.defaultsTo(10);
